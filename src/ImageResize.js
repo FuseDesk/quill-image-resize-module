@@ -4,8 +4,9 @@ import DefaultOptions from './DefaultOptions';
 import { DisplaySize } from './modules/DisplaySize';
 import { Toolbar } from './modules/Toolbar';
 import { Resize } from './modules/Resize';
+import { ImageRemoveResetSize} from "./modules/ImageRemoveResetSize";
 
-const knownModules = { DisplaySize, Toolbar, Resize };
+const knownModules = { DisplaySize, Toolbar, Resize, ImageRemoveResetSize };
 
 /**
  * Custom module for quilljs to allow user to resize <img> elements
@@ -85,28 +86,30 @@ export default class ImageResize {
 	};
 
 	handleClick = (evt) => {
-		if (evt.target && evt.target.tagName && evt.target.tagName.toUpperCase() === 'IMG') {
-			if (this.img === evt.target) {
-				// we are already focused on this image
-				return;
-			}
-			if (this.img) {
-				// we were just focused on another image
+		setTimeout(() => {
+			if (evt.target && evt.target.tagName && evt.target.tagName.toUpperCase() === 'IMG') {
+				if (this.img === evt.target) {
+					// we are already focused on this image
+					return;
+				}
+				if (this.img) {
+					// we were just focused on another image
+					this.hide();
+				}
+				// clicked on an image inside the editor
+				this.show(evt.target);
+				evt.preventDefault(); //Prevent IE 11 drag handles appearing
+			} else if (this.img) {
+				// clicked on a non image
 				this.hide();
 			}
-			// clicked on an image inside the editor
-			this.show(evt.target);
-			evt.preventDefault(); //Prevent IE 11 drag handles appearing
-		} else if (this.img) {
-			// clicked on a non image
-			this.hide();
-		}
+		}, 1)
 	};
 
 	handleScroll = (evt) => {
 		//Hide the overlay when the editor is scrolled,
 		//otherwise image is no longer correctly aligned with overlay
-		this.hide();
+		requestAnimationFrame(this.repositionElements)
 	};
 
 	show = (img) => {
