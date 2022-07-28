@@ -1,5 +1,6 @@
 import Quill from "quill";
 import defaultsDeep from 'lodash/defaultsDeep';
+import debounce from 'lodash/debounce';
 import DefaultOptions from './DefaultOptions';
 import { DisplaySize } from './modules/DisplaySize';
 import { Toolbar } from './modules/Toolbar';
@@ -81,7 +82,6 @@ export default class ImageResize {
 				module.onDestroy();
 			},
 		);
-		console.log('destroyed')
 		this.modules = [];
 	};
 
@@ -207,10 +207,14 @@ export default class ImageResize {
 		}
 	};
 
-	handleOnTextChange = () => {
-		if (!this.img) return
-		this.hide()
-	}
+	handleOnTextChange = debounce(() => {
+		try {
+			if (this.img && Quill.find(this.img)) return
+			this.hide()
+		} catch (err) {
+			console.error("ImageResizeError: ", err)
+		}
+	}, 300)
 }
 
 if (window.Quill) {
