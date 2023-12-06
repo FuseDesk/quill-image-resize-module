@@ -1,7 +1,12 @@
 import Quill from "quill";
-import IconAlignLeft from 'quill/assets/icons/align-left.svg';
-import IconAlignCenter from 'quill/assets/icons/align-center.svg';
-import IconAlignRight from 'quill/assets/icons/align-right.svg';
+
+import IconInline from '../../assets/inline.svg'
+import IconFloatLeft from '../../assets/float-left.svg'
+import IconFloatRight from '../../assets/float-right.svg'
+import IconBlockLeft from '../../assets/block-left.svg'
+import IconBlockRight from '../../assets/block-right.svg'
+import IconBlockCenter from '../../assets/block-center.svg'
+
 import { BaseModule } from './BaseModule';
 
 const Parchment = Quill.imports.parchment;
@@ -34,36 +39,69 @@ export class Toolbar extends BaseModule {
     onUpdate = () => {};
 
     _defineAlignments = () => {
-        this.alignments = [
+
+		this.alignments = [
+			// Inline
+			{
+                icon: IconInline,
+                apply: () => {
+                    DisplayStyle.add(this.img, 'inline');
+                    FloatStyle.remove(this.img);
+					MarginStyle.add(this.img, 'none');
+                },
+                isApplied: () =>
+                    FloatStyle.value(this.img) === 'none' &&
+                    MarginStyle.value(this.img) === 'none',
+            },
+
+			// Float
             {
-                icon: IconAlignLeft,
+                icon: IconFloatLeft,
                 apply: () => {
                     DisplayStyle.add(this.img, 'inline');
                     FloatStyle.add(this.img, 'left');
 					MarginStyle.add(this.img, '0 1em 1em 0');
-					this.img.align = 'left';
                 },
                 isApplied: () => FloatStyle.value(this.img) == 'left',
             },
             {
-                icon: IconAlignCenter,
-                apply: () => {
-                    DisplayStyle.add(this.img, 'block');
-                    FloatStyle.remove(this.img);
-					MarginStyle.add(this.img, 'auto');
-					this.img.align = 'center';
-                },
-                isApplied: () => MarginStyle.value(this.img) == 'auto',
-            },
-            {
-                icon: IconAlignRight,
+                icon: IconFloatRight,
                 apply: () => {
                     DisplayStyle.add(this.img, 'inline');
                     FloatStyle.add(this.img, 'right');
 					MarginStyle.add(this.img, '0 0 1em 1em');
-					this.img.align = 'right';
                 },
                 isApplied: () => FloatStyle.value(this.img) == 'right',
+            },
+
+			// Block alignment
+			{
+                icon: IconBlockCenter,
+                apply: () => {
+                    DisplayStyle.add(this.img, 'block');
+                    FloatStyle.remove(this.img);
+					MarginStyle.add(this.img, 'auto');
+                },
+                isApplied: () => MarginStyle.value(this.img) == 'auto',
+            },
+			{
+                icon: IconBlockLeft,
+                apply: () => {
+                    DisplayStyle.add(this.img, 'block');
+                    FloatStyle.remove(this.img);
+					MarginStyle.add(this.img, '0 auto 0 0');
+                },
+                isApplied: () => MarginStyle.value(this.img) == '0 auto 0 0',
+            },
+			{
+                icon: IconBlockRight,
+                apply: () => {
+                    DisplayStyle.add(this.img, 'block');
+                    FloatStyle.remove(this.img);
+					MarginStyle.add(this.img, '0 0 0 auto');
+					
+                },
+                isApplied: () => MarginStyle.value(this.img) == '0 0 0 auto',
             },
         ];
     };
